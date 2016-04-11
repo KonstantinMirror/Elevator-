@@ -2,7 +2,10 @@ package epamlab;
 
 public class Building {
 	
-	 private int floorNumber;
+	 private int floorNumbers;
+	 private Floor[] floors;
+	 private Elevator elevator;
+	 
 	 
 
 }
