@@ -1,6 +1,10 @@
 package epamlab;
 
+import org.apache.log4j.Logger;
+
 public class Person implements Runnable {
+	
+	Logger log = Logger.getLogger(getClass());
 	
 	 public final String name;
 	 public final int currentFlor;
@@ -23,7 +27,7 @@ public class Person implements Runnable {
 			building.getFloors()[currentFlor].removeWaitPerson(this);
 			building.goOutFromNeedFloor(this);
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			log.error(e);
 		}
 		
 		

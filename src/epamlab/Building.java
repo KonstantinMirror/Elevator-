@@ -1,6 +1,9 @@
 package epamlab;
 
+import org.apache.log4j.Logger;
+
 public class Building {
+	Logger log = Logger.getLogger(getClass());
 
 	public Building(Floor[] floors, Elevator elevator) {
 		this.floors = floors;

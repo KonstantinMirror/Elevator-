@@ -7,8 +7,12 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class Elevator implements Runnable {
+import org.apache.log4j.Logger;
 
+public class Elevator implements Runnable {
+	
+
+	Logger log = Logger.getLogger(getClass());
 	private Lock lock = new ReentrantLock();
 	private Condition condition = lock.newCondition();
 	private int capacity;
@@ -17,6 +21,7 @@ public class Elevator implements Runnable {
 	private boolean directUp = true;
 	private Set<Person> personInElevator = new HashSet<>();
 	private CountDownLatch countDownLatch;
+	private Condition[] floorsCondition;
 
 	public Lock getLock() {
 		return lock;
@@ -37,7 +42,7 @@ public class Elevator implements Runnable {
 			if (capacity < personInElevator.size()) {
 				personInElevator.add(person);
 				isInElevator = true;
-				System.out.println("Person " + person + " in elevator");
+				log.info("Person " + person + " in elevator");
 			}
 		} finally {
 			lock.unlock();
@@ -50,7 +55,7 @@ public class Elevator implements Runnable {
 		try {
 			lock.lock();
 			personInElevator.remove(person);
-			System.out.println("Person " + person + " is arrive");
+			log.info("Person " + person + " is arrive");
 		} finally {
 			lock.unlock();
 		}
@@ -79,8 +84,9 @@ public class Elevator implements Runnable {
 				Thread.sleep(200);
 				move();
 				countDownLatch = new CountDownLatch(personInElevator.size());
-				countDownLatch.await();
 				condition.signalAll();
+				countDownLatch.await();
+				floorsCondition[currentFloor].signalAll();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
