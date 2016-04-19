@@ -2,30 +2,31 @@ package epamlab;
 
 public class Person implements Runnable {
 	
-	 private String name;
-	 private int currentFlor;
-	 private int needFloor;
+	 public final String name;
+	 public final int currentFlor;
+	 public final int needFloor;
+	 Building building;
 	 
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
+	 
+	public Person(String name, int currentFlor, int needFloor) {
 		this.name = name;
-	}
-	public int getCurrentFlor() {
-		return currentFlor;
-	}
-	public void setCurrentFlor(int currentFlor) {
 		this.currentFlor = currentFlor;
-	}
-	public int getNeedFloor() {
-		return needFloor;
-	}
-	public void setNeedFloor(int needFloor) {
 		this.needFloor = needFloor;
 	}
+
+
 	@Override
 	public void run() {
+		try {
+			building.getFloors()[currentFlor].addWaitPerson(this);
+			building.waitElevator(this);
+			building.getFloors()[currentFlor].removeWaitPerson(this);
+			building.goOutFromNeedFloor(this);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		
 		
 	}

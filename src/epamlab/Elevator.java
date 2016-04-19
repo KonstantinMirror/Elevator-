@@ -3,50 +3,91 @@ package epamlab;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class Elevator implements Runnable {
-	
-	Lock lock = new ReentrantLock();
-	Set<Person> personInElevator = new HashSet<>();
 
+	private Lock lock = new ReentrantLock();
+	private Condition condition = lock.newCondition();
+	
+	Set<Person> personInElevator = new HashSet<>();
+	
+	public void addPersonToElevator(Person person) {
+		try{
+			lock.lock();
+			personInElevator.add(person);
+		}finally{
+			lock.unlock();
+		}
+	}
+	
+	public void removePersonFromElevator(Person person) {
+		try{
+			lock.lock();
+			personInElevator.remove(person);
+		}finally{
+			lock.unlock();
+		}
+	}
+	
+	
+	
 	private int capacity;
-	private int currentFloor = 1;
+	public volatile static int currentFloor = 1;
 	private int maxFloor = 10;
 	private boolean directUp = true;
+	
+	
+	
+	
+	public boolean goToElevator(Person person) {
+		
+		
+		return false;
+	}
+	
+	private void addToElevator(Person person){
+		try{
+			lock.lock();
+			personInElevator.add(person);
+			
+		}finally{
+			lock.unlock();
+		}
+	}
+	
+	public void goOutElevator(Person person){
+		
+			try {
+				while(!(person.needFloor == currentFloor)){
+				condition.await();
+				}
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		removeFromElevator(person);
+	}
+	
+	private void removeFromElevator(Person person){
+		
+		try{
+			lock.lock();
+			personInElevator.remove(person);
+			System.out.println("Person "+ person +" is arrive");
+		}finally{
+			lock.unlock();
+		}
+	}
+	
 
-	public int getCapacity() {
-		return capacity;
+	
+
+	public Lock getLock() {
+		return lock;
 	}
 
-	public void setCapacity(int capacity) {
-		this.capacity = capacity;
-	}
-
-	public int getCurrentFloor() {
-		return currentFloor;
-	}
-
-	public void setCurrentFloor(int currentFloor) {
-		this.currentFloor = currentFloor;
-	}
-
-	public int getMaxFloor() {
-		return maxFloor;
-	}
-
-	public void setMaxFloor(int maxFloor) {
-		this.maxFloor = maxFloor;
-	}
-
-	public boolean isDirectUp() {
-		return directUp;
-	}
-
-	public void setDirectUp(boolean directUp) {
-		this.directUp = directUp;
-	}
 
 	public void move() {
 		if (currentFloor < maxFloor && directUp) {
@@ -62,16 +103,7 @@ public class Elevator implements Runnable {
 			}
 		}
 	}
-	
-	public void persoToElevator(Person person) {
-		if(person.getCurrentFlor() == currentFloor){
-		}
-	}
-	
-	public void persoOutElevator(Person person) {
-		if(person.getCurrentFlor() == currentFloor){
-		}
-	}
+
 
 	@Override
 	public void run() {
@@ -79,8 +111,7 @@ public class Elevator implements Runnable {
 			System.out.println(currentFloor);
 			try {
 				Thread.sleep(200);
-				move();					
-				}
+				move();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -88,5 +119,4 @@ public class Elevator implements Runnable {
 		}
 
 	}
-
 }
