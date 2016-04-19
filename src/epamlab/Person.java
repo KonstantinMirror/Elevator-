@@ -23,7 +23,6 @@ public class Person implements Runnable {
 			building.getFloors()[currentFlor].removeWaitPerson(this);
 			building.goOutFromNeedFloor(this);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

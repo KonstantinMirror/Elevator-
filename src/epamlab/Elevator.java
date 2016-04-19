@@ -1,8 +1,8 @@
 package epamlab;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -11,83 +11,50 @@ public class Elevator implements Runnable {
 
 	private Lock lock = new ReentrantLock();
 	private Condition condition = lock.newCondition();
-	
-	Set<Person> personInElevator = new HashSet<>();
-	
-	public void addPersonToElevator(Person person) {
-		try{
-			lock.lock();
-			personInElevator.add(person);
-		}finally{
-			lock.unlock();
-		}
-	}
-	
-	public void removePersonFromElevator(Person person) {
-		try{
-			lock.lock();
-			personInElevator.remove(person);
-		}finally{
-			lock.unlock();
-		}
-	}
-	
-	
-	
 	private int capacity;
 	public volatile static int currentFloor = 1;
 	private int maxFloor = 10;
 	private boolean directUp = true;
-	
-	
-	
-	
-	public boolean goToElevator(Person person) {
-		
-		
-		return false;
-	}
-	
-	private void addToElevator(Person person){
-		try{
-			lock.lock();
-			personInElevator.add(person);
-			
-		}finally{
-			lock.unlock();
-		}
-	}
-	
-	public void goOutElevator(Person person){
-		
-			try {
-				while(!(person.needFloor == currentFloor)){
-				condition.await();
-				}
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		removeFromElevator(person);
-	}
-	
-	private void removeFromElevator(Person person){
-		
-		try{
-			lock.lock();
-			personInElevator.remove(person);
-			System.out.println("Person "+ person +" is arrive");
-		}finally{
-			lock.unlock();
-		}
-	}
-	
-
-	
+	private Set<Person> personInElevator = new HashSet<>();
+	private CountDownLatch countDownLatch;
 
 	public Lock getLock() {
 		return lock;
 	}
 
+	public Condition getCondition() {
+		return condition;
+	}
+
+	public CountDownLatch getCountDownLatch() {
+		return countDownLatch;
+	}
+
+	public boolean goToElevator(Person person) {
+		boolean isInElevator = false;
+		try {
+			lock.lock();
+			if (capacity < personInElevator.size()) {
+				personInElevator.add(person);
+				isInElevator = true;
+				System.out.println("Person " + person + " in elevator");
+			}
+		} finally {
+			lock.unlock();
+		}
+		return isInElevator;
+	}
+
+	public void goOutElevator(Person person) {
+
+		try {
+			lock.lock();
+			personInElevator.remove(person);
+			System.out.println("Person " + person + " is arrive");
+		} finally {
+			lock.unlock();
+		}
+	}
 
 	public void move() {
 		if (currentFloor < maxFloor && directUp) {
@@ -104,7 +71,6 @@ public class Elevator implements Runnable {
 		}
 	}
 
-
 	@Override
 	public void run() {
 		for (int i = 30; i > 0; i--) {
@@ -112,6 +78,9 @@ public class Elevator implements Runnable {
 			try {
 				Thread.sleep(200);
 				move();
+				countDownLatch = new CountDownLatch(personInElevator.size());
+				countDownLatch.await();
+				condition.signalAll();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
