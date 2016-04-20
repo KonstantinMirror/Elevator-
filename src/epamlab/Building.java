@@ -18,24 +18,44 @@ public class Building {
 	}
 
 	public void waitElevator(Person person) throws InterruptedException {
-		while (true) {
-			if (person.currentFlor == Elevator.currentFloor) {
-				if (elevator.goToElevator(person)) {
-					break;
+		try {
+			floors[person.currentFlor - 1].getLock().lock();
+			while (true) {
+				log.info("try set "  + person );
+				log.info("------>"+elevator.getCurrentFloor());
+				if (person.currentFlor == elevator.getCurrentFloor()) {
+					if (elevator.goToElevator(person)) {
+						elevator.getCountDownLatch().countDown();
+						break;
+					}
 				}
+				floors[person.currentFlor - 1].getCondition().await();
 			}
-			floors[person.currentFlor].getCondition().await();
+		} finally {
+			floors[person.currentFlor - 1].getLock().unlock();
 		}
+
 	}
 
 	public void goOutFromNeedFloor(Person person) throws InterruptedException {
+		log.info("wait go Out Elevator");
 		while (true) {
-			elevator.getCountDownLatch().countDown();
-			if (person.currentFlor == Elevator.currentFloor) {
-				elevator.goOutElevator(person);
-			} else {
-				elevator.getCondition().await();
+			try {
+				elevator.getLock().lock();
+				log.info("try out  "  + person);
+				log.info( "elevator floor is "+  elevator.getCurrentFloor() );
+				if (person.needFloor == elevator.getCurrentFloor()) {
+					elevator.goOutElevator(person);
+					elevator.getCountDownLatch().countDown();
+					break;
+				} else {
+					elevator.getCountDownLatch().countDown();
+					elevator.getCondition().await();
+				}
+			} finally {
+				elevator.getLock().unlock();
 			}
+
 		}
 
 	}
