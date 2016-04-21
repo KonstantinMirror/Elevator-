@@ -24,6 +24,7 @@ public class Building {
 				log.info("try set "  + person );
 				log.info("------>"+elevator.getCurrentFloor());
 				if (person.currentFlor == elevator.getCurrentFloor()) {
+					log.info(".........");
 					if (elevator.goToElevator(person)) {
 						elevator.getCountDownLatch().countDown();
 						break;
