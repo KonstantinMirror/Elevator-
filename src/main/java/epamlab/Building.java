@@ -1,19 +1,22 @@
 package epamlab;
 
+import epamlab.interfaces.IElevator;
+import epamlab.interfaces.IFloor;
 import org.apache.log4j.Logger;
+
 
 public class Building {
 	Logger log = Logger.getLogger(getClass());
 
-	public Building(Floor[] floors, Elevator elevator) {
+	public Building(IFloor[] floors, IElevator elevator) {
 		this.floors = floors;
 		this.elevator = elevator;
 	}
 
-	private Floor[] floors;
-	private Elevator elevator;
+	private IFloor[] floors;
+	private IElevator elevator;
 
-	public Floor[] getFloors() {
+	public IFloor[] getFloors() {
 		return floors;
 	}
 
@@ -56,8 +59,6 @@ public class Building {
 			} finally {
 				elevator.getLock().unlock();
 			}
-
 		}
-
 	}
 }

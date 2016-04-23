@@ -9,15 +9,18 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import epamlab.interfaces.IElevator;
+import epamlab.interfaces.IFloor;
 import org.apache.log4j.Logger;
 
-public class Elevator implements Runnable {
+
+public class Elevator implements IElevator {
 
     Logger log = Logger.getLogger(getClass());
     private Lock lock;
     private Condition condition;
     private CountDownLatch countDownLatch;
-    private Floor[] floorsCondition;
+    private IFloor[] floorsCondition;
 
     private int capacity;
     private volatile int currentFloor = 1;
@@ -28,7 +31,7 @@ public class Elevator implements Runnable {
     private int counter;
     private int arrivedPerson = 0;
 
-    public Elevator(int capacity, int maxFloor, boolean directUp, Floor[] floorsCondition) {
+    public Elevator(int capacity, int maxFloor, boolean directUp, IFloor[] floorsCondition) {
         counter = 0;
         lock = new ReentrantLock();
         this.condition = lock.newCondition();
@@ -40,22 +43,27 @@ public class Elevator implements Runnable {
         this.personInElevator = new HashSet<>();
     }
 
+    @Override
     public int getCurrentFloor() {
         return currentFloor;
     }
 
+    @Override
     public Lock getLock() {
         return lock;
     }
 
+    @Override
     public Condition getCondition() {
         return condition;
     }
 
+    @Override
     public CountDownLatch getCountDownLatch() {
         return countDownLatch;
     }
 
+    @Override
     public boolean goToElevator(Person person) {
         boolean isInElevator = false;
         try {
@@ -71,6 +79,7 @@ public class Elevator implements Runnable {
         return isInElevator;
     }
 
+    @Override
     public void goOutElevator(Person person) {
 
         try {

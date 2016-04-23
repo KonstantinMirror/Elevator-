@@ -36,31 +36,23 @@ public class Person implements Runnable {
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + currentFlor;
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + needFloor;
-        return result;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Person person = (Person) o;
+
+        if (currentFlor != person.currentFlor) return false;
+        if (needFloor != person.needFloor) return false;
+        return !(name != null ? !name.equals(person.name) : person.name != null);
+
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        Person other = (Person) obj;
-        if (currentFlor != other.currentFlor)
-            return false;
-        if (name == null) {
-            if (other.name != null)
-                return false;
-        } else if (!name.equals(other.name))
-            return false;
-        return needFloor == other.needFloor;
+    public int hashCode() {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + currentFlor;
+        result = 31 * result + needFloor;
+        return result;
     }
 }
