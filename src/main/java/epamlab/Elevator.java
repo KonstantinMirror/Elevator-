@@ -23,15 +23,15 @@ public class Elevator implements IElevator {
     private IFloor[] floorsCondition;
 
     private int capacity;
-    private volatile int currentFloor = 1;
-    private int maxFloor = 10;
+    private volatile int currentFloor;
+    private int maxFloor ;
     private boolean directUp = true;
     private Set<Person> personInElevator;
 
     private int counter;
     private int arrivedPerson = 0;
 
-    public Elevator(int capacity, int maxFloor, boolean directUp, IFloor[] floorsCondition) {
+    public Elevator(int capacity, int maxFloor, IFloor[] floorsCondition) {
         counter = 0;
         lock = new ReentrantLock();
         this.condition = lock.newCondition();
@@ -39,8 +39,14 @@ public class Elevator implements IElevator {
         this.floorsCondition = floorsCondition;
         this.capacity = capacity;
         this.maxFloor = maxFloor;
-        this.directUp = directUp;
+        directUp = true;
+        currentFloor = 1;
         this.personInElevator = new HashSet<>();
+    }
+
+    @Override
+    public int getCountArrivedPerson() {
+        return arrivedPerson;
     }
 
     @Override
@@ -92,7 +98,7 @@ public class Elevator implements IElevator {
         }
     }
 
-    public void move() {
+    private void move() {
         try {
             lock.lock();
             if (currentFloor < maxFloor && directUp) {

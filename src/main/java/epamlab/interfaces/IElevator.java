@@ -20,4 +20,6 @@ public interface IElevator extends Runnable {
     boolean goToElevator(Person person);
 
     void goOutElevator(Person person);
+
+    int getCountArrivedPerson();
 }

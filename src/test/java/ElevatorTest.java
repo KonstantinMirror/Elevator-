@@ -1,56 +1,36 @@
 import epamlab.Building;
+import epamlab.Elevator;
 import epamlab.Person;
-import epamlab.interfaces.IElevator;
 import epamlab.interfaces.IFloor;
 import org.junit.Before;
 import org.junit.Test;
-import epamlab.Elevator;
-import epamlab.Floor;
-
-import java.util.ArrayList;
-import java.util.List;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 public class ElevatorTest {
 
-    private List<Thread> listPersons;
-    private IElevator elevator;
+    Elevator elevator;
+    IFloor[] floors;
+    Person person;
+
+    int CAPACITY_ELEVATOR = 10;
+    int COUNT_FLOORS = 10;
 
     @Before
-    public void initFloors() {
-        int COUNT_FLOORS = 20;
-        int CAPACITY_ELEVATOR = 10;
-        IFloor[] floors = new IFloor[COUNT_FLOORS];
+    public void init() {
+        floors = new IFloor[COUNT_FLOORS];
         for (int i = 0; i < COUNT_FLOORS; i++) {
-            floors[i] = new Floor();
+            floors[i] = mock(IFloor.class);
         }
-        elevator = new Elevator(CAPACITY_ELEVATOR, COUNT_FLOORS, true, floors);
-        Building building = new Building(floors, elevator);
-        listPersons = new ArrayList<>();
-        for (int i = 0; i < 100; i++) {
-            int needFlor = (int) ((Math.random() * 1000) % 20);
-            int currentFloor = (int) ((Math.random() * 1000) % 20);
-            if (currentFloor == 0) {
-                currentFloor = 1;
-            }
-            if (needFlor == 0) {
-                needFlor = 1;
-            }
-            String name = "" + i;
-            listPersons.add(new Thread(new Person(name, currentFloor, needFlor, building)));
-        }
+        elevator = new Elevator(CAPACITY_ELEVATOR, COUNT_FLOORS, floors);
+        Building building = mock(Building.class);
+        person = new Person("Piter", 1, 5, building);
     }
 
     @Test
-    public void test() {
-        for (Thread thread : listPersons) {
-            thread.start();
-        }
-        Thread elevatorThread = new Thread(elevator);
-        elevatorThread.start();
-        try {
-            elevatorThread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+    public void testElevator() {
+        assertTrue(elevator.goToElevator(person));
+        elevator.goOutElevator(person);
+        assertEquals(elevator.getCountArrivedPerson(),1);
     }
 }
