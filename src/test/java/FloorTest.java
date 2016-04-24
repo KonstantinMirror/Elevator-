@@ -3,6 +3,7 @@ import epamlab.Floor;
 import epamlab.Person;
 import epamlab.interfaces.IFloor;
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -14,8 +15,8 @@ public class FloorTest {
         Building building = mock(Building.class);
         Person person = new Person("Piter", 1, 5, building);
         floor.addWaitPerson(person);
-        assertEquals(floor.getTotalCountPersons(),1);
+        assertEquals(floor.getTotalCountPersons(), 1);
         floor.removeWaitPerson(person);
-        assertEquals(floor.getTotalCountPersons(),0);
+        assertEquals(floor.getTotalCountPersons(), 0);
     }
 }

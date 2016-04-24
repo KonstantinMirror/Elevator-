@@ -24,7 +24,7 @@ public class Elevator implements IElevator {
 
     private int capacity;
     private volatile int currentFloor;
-    private int maxFloor ;
+    private int maxFloor;
     private boolean directUp = true;
     private Set<Person> personInElevator;
 

@@ -4,6 +4,7 @@ import epamlab.Person;
 import epamlab.interfaces.IFloor;
 import org.junit.Before;
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -31,6 +32,6 @@ public class ElevatorTest {
     public void testElevator() {
         assertTrue(elevator.goToElevator(person));
         elevator.goOutElevator(person);
-        assertEquals(elevator.getCountArrivedPerson(),1);
+        assertEquals(elevator.getCountArrivedPerson(), 1);
     }
 }

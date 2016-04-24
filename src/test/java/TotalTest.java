@@ -7,8 +7,10 @@ import org.junit.Before;
 import org.junit.Test;
 import epamlab.Elevator;
 import epamlab.Floor;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import static org.junit.Assert.*;
 
 public class TotalTest {
@@ -51,7 +53,7 @@ public class TotalTest {
         elevatorThread.start();
         try {
             elevatorThread.join();
-            assertEquals(COUNT_PERSON,elevator.getCountArrivedPerson());
+            assertEquals(COUNT_PERSON, elevator.getCountArrivedPerson());
         } catch (InterruptedException e) {
             log.error(e);
         }

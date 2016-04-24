@@ -5,6 +5,7 @@ import java.util.Set;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+
 import org.apache.log4j.Logger;
 
 public class Floor implements epamlab.interfaces.IFloor {
@@ -17,6 +18,7 @@ public class Floor implements epamlab.interfaces.IFloor {
     public Lock getLock() {
         return lock;
     }
+
     @Override
     public Condition getCondition() {
         return condition;
